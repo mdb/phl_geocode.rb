@@ -9,9 +9,7 @@ The gem uses Philadelphia's [311 Mobile Data Service API](http://services.phila.
 ## Example Usage
 
     require "phl_geocode"
-
     phl = PHLGeocode.new
-
     phl.get_coordinates "1500 Market Street"
 
 ## Example Response
