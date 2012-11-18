@@ -12,6 +12,12 @@ The gem uses Philadelphia's [311 Mobile Data Service API](http://services.phila.
     phl = PHLGeocode.new
     phl.get_coordinates "1500 Market Street"
 
+Override default settings:
+
+    require "phl_geocode"
+    phl = PHLGeocode.new :min_confidence => 100
+    phl.get_coordinates "1500 Market Street"
+
 ## Example Response
     
     [{
