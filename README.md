@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/mdb/phl_geocode.rb.png?branch=master)](https://travis-ci.org/mdb/phl_geocode.rb)
+
 # phl_geocode
 
 A Ruby gem for getting latitude and longitude coordinates for a Philadelphia address.
