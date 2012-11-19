@@ -1,7 +1,7 @@
 require 'rubygems'
+require 'rspec'
 require 'bundler/setup'
 require 'simplecov'
-require 'rspec'
 require 'mocha/api'
 SimpleCov.start
 
