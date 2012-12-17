@@ -18,8 +18,10 @@ describe PHLGeocode do
 
     context "it is not passed any options" do
       it "creates a :settings hash with some default settings" do
-        @phl.settings[:min_confidence].should == 81
-        @phl.settings[:api_base].should == "http://services.phila.gov/ULRS311/Data/Location/"
+        @phl.settings[:min_confidence].should eq 81
+        @phl.settings[:api_base].should eq "http://services.phila.gov"
+        @phl.settings[:location_path].should eq "/ULRS311/Data/Location/"
+        @phl.settings[:address_key_path].should eq "/ULRS311/Data/LIAddressKey/"
       end
     end
 
@@ -47,7 +49,7 @@ describe PHLGeocode do
         :content_type => "application/json",
         :body => @fake_http_response_body
       )
-      Net::HTTP.stubs(:get_response).returns(@http_mock)
+      Net::HTTP.stub(:get_response).and_return @http_mock 
     end
 
     it "exists as a method on a PHLGeocode" do
@@ -61,9 +63,14 @@ describe PHLGeocode do
       lambda { @phl.get_coordinates({}) }.should raise_error
     end
 
-    it "sets :response to the value of the API call response" do
+    it "makes a properly formatted API call to the proper endpoint" do
+      Net::HTTP.should_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/Location/some%20address"))
       @phl.get_coordinates "some address"
-      @phl.response.should == @http_mock
+    end
+
+    it "sets :coordinates_response to the value of the API call response" do
+      @phl.get_coordinates "some address"
+      @phl.coordinates_response.should == @http_mock
     end
 
     it "returns an array of locations whose :similarity is greater than or equal to :settings.min_confidence" do
@@ -80,6 +87,41 @@ describe PHLGeocode do
 
     it "returns an array of locations, each of which reports a standardized address as :address" do
       @phl.get_coordinates("some address")[0][:address].should == "FAKE ADDRESS"
+    end
+  end
+
+  describe "#get_address_key" do
+    before :each do
+      @phl = PHLGeocode.new
+      @http_mock = mock("Net::HTTP")
+      @http_mock.stubs(
+        :code => 200,
+        :message => "OK",
+        :content_type => "application/json",
+        :body => {foo: "bar"}.to_json
+      )
+      Net::HTTP.stub(:get_response).and_return @http_mock 
+    end
+
+    it "exists as a method on a PHLGeocode" do
+      @phl.respond_to?(:get_address_key).should eq true
+    end
+
+    it "raises an error if it is not passed a valid string argument" do
+      lambda { @phl.get_address_key }.should raise_error
+      lambda { @phl.get_address_key(3) }.should raise_error
+      lambda { @phl.get_address_key(nil) }.should raise_error
+      lambda { @phl.get_address_key({}) }.should raise_error
+    end
+
+    it "makes a properly formatted API call to the proper endpoint" do
+      Net::HTTP.should_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/LIAddressKey/some%20address"))
+      @phl.get_address_key "some address"
+    end
+
+    it "sets :address_key_response to the value of the API call response" do
+      @phl.get_address_key "some address"
+      @phl.address_key_response.should == @http_mock
     end
   end
 end
