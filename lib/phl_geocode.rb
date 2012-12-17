@@ -5,6 +5,8 @@ require "net/http"
 class PHLGeocode
   attr_accessor :address_key_response
   attr_accessor :coordinates_response
+  attr_accessor :last_queried_address_key_addr
+  attr_accessor :last_queried_coordinates_addr
   attr_accessor :settings
 
   def initialize(options={})
@@ -18,13 +20,27 @@ class PHLGeocode
 
   def get_coordinates(address=nil)
     raise ArgumentError("Argument must be a string") unless address.is_a? String
-    @coordinates_response ||= call_api('coordinates', address)
+
+    if address == @last_queried_coordinates_addr
+      @coordinates_response ||= call_api('coordinates', address)
+    else
+      @coordinates_response = call_api('coordinates', address)
+      @last_queried_coordinates_addr = address
+    end
+
     parse_locations @coordinates_response
   end
 
   def get_address_key(address=nil)
     raise ArgumentError("Argument must be a string") unless address.is_a? String
-    @address_key_response ||= call_api('address_key', address)
+
+    if address == @last_queried_address_key_addr
+      @address_key_response ||= call_api('address_key', address)
+    else
+      @address_key_response = call_api('address_key', address)
+      @last_queried_address_key_addr = address
+    end
+
     parse_address_key @address_key_response
   end
 
