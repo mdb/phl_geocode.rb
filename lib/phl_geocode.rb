@@ -19,16 +19,27 @@ class PHLGeocode
   def get_coordinates(address=nil)
     raise ArgumentError("Argument must be a string") unless address.is_a? String
     @coordinates_response ||= call_api('coordinates', address)
-    parse_locations(@coordinates_response)
+    parse_locations @coordinates_response
   end
 
   def get_address_key(address=nil)
     raise ArgumentError("Argument must be a string") unless address.is_a? String
     @address_key_response ||= call_api('address_key', address)
-    JSON.parse(@address_key_response.body)
+    parse_address_key @address_key_response
   end
 
   private
+  def parse_address_key(response)
+    key_json = JSON.parse(response.body)
+    
+    {
+      :agency_id => key_json["AgencyID"],
+      :topic_name => key_json["TopicName"],
+      :topic_id => key_json["TopicID"],
+      :address_ref => key_json["AddressRef"]
+    }
+  end
+
   def parse_locations(response)
     locations_json = JSON.parse(response.body)["Locations"]
 
