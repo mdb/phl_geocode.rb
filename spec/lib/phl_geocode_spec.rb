@@ -63,30 +63,44 @@ describe PHLGeocode do
       lambda { @phl.get_coordinates({}) }.should raise_error
     end
 
-    it "makes a properly formatted API call to the proper endpoint" do
-      Net::HTTP.should_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/Location/some%20address"))
-      @phl.get_coordinates "some address"
+    context "it is passed an address for the first time" do
+      it "makes a properly formatted API call to the proper endpoint" do
+        Net::HTTP.should_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/Location/some%20address"))
+        @phl.get_coordinates "some address"
+      end
+
+      it "sets :coordinates_response to the value of the API call response" do
+        @phl.get_coordinates "some address"
+        @phl.coordinates_response.should == @http_mock
+      end
+
+      it "returns an array of locations whose :similarity is greater than or equal to :settings.min_confidence" do
+        @phl.get_coordinates("some address")[0][:similarity].should == 100
+      end
+
+      it "returns an array of locations, each of which reports a :latitude" do
+        @phl.get_coordinates("some address")[0][:latitude].should == 39.9521740263203
+      end
+
+      it "returns an array of locations, each of which reports a :longitude" do
+        @phl.get_coordinates("some address")[0][:longitude].should == -75.1661518986459
+      end
+
+      it "returns an array of locations, each of which reports a standardized address as :address" do
+        @phl.get_coordinates("some address")[0][:address].should == "FAKE ADDRESS"
+      end
     end
 
-    it "sets :coordinates_response to the value of the API call response" do
-      @phl.get_coordinates "some address"
-      @phl.coordinates_response.should == @http_mock
-    end
+    context "it is passed the address it was last passed" do
+      before :each do
+        @phl.get_coordinates "some address 1"
+      end
 
-    it "returns an array of locations whose :similarity is greater than or equal to :settings.min_confidence" do
-      @phl.get_coordinates("some address")[0][:similarity].should == 100
-    end
+      it "does not make a properly formatted API call to the proper endpoint" do
+        Net::HTTP.should_not_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/Location/some%20address%201"))
+        @phl.get_coordinates "some address 1"
+      end
 
-    it "returns an array of locations, each of which reports a :latitude" do
-      @phl.get_coordinates("some address")[0][:latitude].should == 39.9521740263203
-    end
-
-    it "returns an array of locations, each of which reports a :longitude" do
-      @phl.get_coordinates("some address")[0][:longitude].should == -75.1661518986459
-    end
-
-    it "returns an array of locations, each of which reports a standardized address as :address" do
-      @phl.get_coordinates("some address")[0][:address].should == "FAKE ADDRESS"
     end
   end
 
@@ -114,14 +128,32 @@ describe PHLGeocode do
       lambda { @phl.get_address_key({}) }.should raise_error
     end
 
-    it "makes a properly formatted API call to the proper endpoint" do
-      Net::HTTP.should_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/LIAddressKey/some%20address"))
-      @phl.get_address_key "some address"
+    context "it is passed an address for the first time" do
+      it "makes a properly formatted API call to the proper endpoint" do
+        Net::HTTP.should_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/LIAddressKey/some%20address"))
+        @phl.get_address_key "some address"
+      end
+
+      it "sets :address_key_response to the value of the API call response" do
+        @phl.get_address_key "some address"
+        @phl.address_key_response.should == @http_mock
+      end
+
+      it "sets :last_queried_address_key_addr to the value of the address it is passed" do
+        @phl.get_address_key "some address 1"
+        @phl.last_queried_address_key_addr.should == "some address 1"
+      end
     end
 
-    it "sets :address_key_response to the value of the API call response" do
-      @phl.get_address_key "some address"
-      @phl.address_key_response.should == @http_mock
+    context "it is passed the same address it was last passed" do
+      before :each do
+        @phl.get_address_key "some address a"
+      end
+
+      it "does not makes a properly formatted API call to the proper endpoint" do
+        Net::HTTP.should_not_receive(:get_response).with(URI.parse("http://services.phila.gov/ULRS311/Data/LIAddressKey/some%20address%20a"))
+        @phl.get_address_key "some address a"
+      end
     end
   end
 end
