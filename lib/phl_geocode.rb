@@ -9,7 +9,7 @@ class PHLGeocode
 
   def initialize(options={})
     @settings = {
-      :min_confidence => 81,
+      :min_confidence => 85,
       :api_base => "http://services.phila.gov",
       :location_path => "/ULRS311/Data/Location/",
       :address_key_path => "/ULRS311/Data/LIAddressKey/"

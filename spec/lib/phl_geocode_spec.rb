@@ -18,7 +18,7 @@ describe PHLGeocode do
 
     context "it is not passed any options" do
       it "creates a :settings hash with some default settings" do
-        @phl.settings[:min_confidence].should eq 81
+        @phl.settings[:min_confidence].should eq 85
         @phl.settings[:api_base].should eq "http://services.phila.gov"
         @phl.settings[:location_path].should eq "/ULRS311/Data/Location/"
         @phl.settings[:address_key_path].should eq "/ULRS311/Data/LIAddressKey/"
@@ -33,7 +33,7 @@ describe PHLGeocode do
 
       it "preserves default settings if no overriding values are passed in the options" do
         phl = PHLGeocode.new :foo => "bar"
-        phl.settings[:min_confidence].should == 81 
+        phl.settings[:min_confidence].should == 85
         phl.settings[:foo].should == "bar"
       end
     end
