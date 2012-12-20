@@ -4,7 +4,7 @@
 
 A Ruby gem for getting latitude and longitude coordinates for a Philadelphia address.
 
-This is the Ruby version of the Node.js [phl-geocoder](http://github.com/mdb/phl-geocoder).
+This is the Ruby version of the Node.js [phl-geocode](http://github.com/mdb/phl-geocode).
 
 The gem uses Philadelphia's [311 Mobile Data Service API](http://services.phila.gov/ULRS311).
 
