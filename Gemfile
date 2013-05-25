@@ -1,13 +1,13 @@
 source "http://rubygems.org"
 
-gem "json"
+gem "json", "1.8.0"
 
 group :development do
-  gem "rake", "10.0.1"
-  gem "rspec", "2.12.0"
-  gem "mocha"
-  gem "bundler", "1.2.2"
-  gem "rdoc", "~> 3.12"
-  gem "jeweler", "~> 1.8.4"
-  gem "simplecov"
+  gem "rake", "10.0.4"
+  gem "rspec", "2.13.0"
+  gem "mocha", "0.14.0"
+  gem "bundler", "1.3.5"
+  gem "rdoc", "4.0.1"
+  gem "jeweler", "1.8.4"
+  gem "simplecov", "0.7.1"
 end
